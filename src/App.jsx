@@ -5,7 +5,7 @@ import "./index.css";
 import Home from "./Pages/home";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
-import Login from "./Pages/Login";
+import Login from "./Pages/login";
 import ConfirmModal from "./components/ConfirmModal";
 
 export default function AppRoutes() {
