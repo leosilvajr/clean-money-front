@@ -9,8 +9,8 @@ export default function Header({ sidebarPx, onToggleSidebar }) {
         <div className="flex items-center gap-4">
           <button
             onClick={onToggleSidebar}
-            className="p-2 rounded-lg hover:bg-gray-600/60 transition-colors"
-            aria-label="Alternar sidebar"
+            className="p-2 rounded-lg hover:bg-gray-600/60 transition-colors cursor-pointer"
+            aria-label="Alternar sidebar" 
           >
             <i className="fas fa-bars text-xl" />
           </button>

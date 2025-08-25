@@ -31,7 +31,7 @@ function Submenu({ label, icon, open, onToggle, collapsed, children }) {
   );
 }
 
-export default function Sidebar({ collapsed, openMenus, toggleSubmenu, sidebarPx }) {
+export default function Sidebar({ collapsed, openMenus, toggleSubmenu, sidebarPx, onLogout }) {
   const location = useLocation();
   const isActive = (path) => location.pathname === path;
 
@@ -114,7 +114,10 @@ export default function Sidebar({ collapsed, openMenus, toggleSubmenu, sidebarPx
         </Submenu>
 
         {/* Sair */}
-        <div className="px-6 py-3 cursor-pointer flex items-center gap-3 hover:bg-red-600 transition-all mt-4">
+        <div
+          onClick={onLogout}
+          className="px-6 py-3 cursor-pointer flex items-center gap-3 hover:bg-gray-700 transition-all mt-4"
+        >
           <i className="fas fa-sign-out-alt text-lg w-5" />
           {!collapsed && <span>Sair</span>}
         </div>
