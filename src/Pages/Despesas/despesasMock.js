@@ -1,0 +1,58 @@
+export const despesasMock = [
+  {
+    id: 1,
+    tipo: "Comida",
+    descricao: "Supermercado do mês",
+    valor: 850.75,
+    data: "2025-08-01",
+  },
+  {
+    id: 2,
+    tipo: "Combustível",
+    descricao: "Abastecimento carro",
+    valor: 320.50,
+    data: "2025-08-02",
+  },
+  {
+    id: 3,
+    tipo: "Aluguel",
+    descricao: "Apartamento centro",
+    valor: 2200.0,
+    data: "2025-08-05",
+  },
+  {
+    id: 4,
+    tipo: "Conta de Luz",
+    descricao: "Energia elétrica",
+    valor: 410.32,
+    data: "2025-08-07",
+  },
+  {
+    id: 5,
+    tipo: "Comida",
+    descricao: "Almoço restaurante",
+    valor: 75.0,
+    data: "2025-08-10",
+  },
+  {
+    id: 6,
+    tipo: "Combustível",
+    descricao: "Gasolina viagem",
+    valor: 500.0,
+    data: "2025-08-11",
+  },
+  {
+    id: 7,
+    tipo: "Conta de Luz",
+    descricao: "Conta de julho",
+    valor: 398.90,
+    data: "2025-08-15",
+  },
+  {
+    id: 8,
+    tipo: "Aluguel",
+    descricao: "Sala comercial",
+    valor: 1800.0,
+    data: "2025-08-20",
+  },
+];

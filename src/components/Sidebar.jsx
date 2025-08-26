@@ -14,20 +14,34 @@ function Submenu({ label, icon, open, onToggle, collapsed, children }) {
         </div>
         {!collapsed && (
           <i
-            className={`fas fa-chevron-down text-sm transition-transform ${
-              open ? "rotate-180" : "rotate-0"
-            }`}
+            className={`fas fa-chevron-down text-sm transition-transform ${open ? "rotate-180" : "rotate-0"}`}
           />
         )}
       </div>
       <div
-        className={`bg-gray-800 overflow-hidden transition-[max-height] duration-300 ${
-          open && !collapsed ? "max-h-60" : "max-h-0"
-        }`}
+        className={`bg-gray-800 overflow-hidden transition-[max-height] duration-300 ${open && !collapsed ? "max-h-60" : "max-h-0"}`}
       >
         {children}
       </div>
     </div>
+  );
+}
+
+function SubmenuItem({ to, icon, children, collapsed }) {
+  const location = useLocation();
+  const active = location.pathname === to;
+
+  return (
+    <Link to={to}>
+      <div
+        className={`px-12 py-2 transition-colors flex items-center gap-2 hover:bg-gray-700 ${
+          active ? "bg-gray-700 text-white" : "text-gray-200"
+        }`}
+      >
+        <i className={`${icon} text-sm w-4`} />
+        {!collapsed && <span className="text-sm">{children}</span>}
+      </div>
+    </Link>
   );
 }
 
@@ -69,48 +83,88 @@ export default function Sidebar({ collapsed, openMenus, toggleSubmenu, sidebarPx
           </div>
         </Link>
 
-        {/* Produtos */}
+        {/* Produtos (exemplos de rotas; crie as páginas se for usar) */}
         <Submenu
           label="Produtos"
           icon="fas fa-box"
-          open={openMenus.produtos}
+          open={!!openMenus.produtos}
           onToggle={() => toggleSubmenu("produtos")}
           collapsed={collapsed}
         >
-          <div className="px-12 py-2 hover:bg-gray-700 transition-colors flex items-center gap-2">
-            <i className="fas fa-plus text-sm w-4" />
-            <span className="text-sm">Cadastrar</span>
-          </div>
-          <div className="px-12 py-2 hover:bg-gray-700 transition-colors flex items-center gap-2">
-            <i className="fas fa-list text-sm w-4" />
-            <span className="text-sm">Listar</span>
-          </div>
-          <div className="px-12 py-2 hover:bg-gray-700 transition-colors flex items-center gap-2">
-            <i className="fas fa-edit text-sm w-4" />
-            <span className="text-sm">Editar</span>
-          </div>
+          <SubmenuItem to="/produtos/novo" icon="fas fa-plus" collapsed={collapsed}>
+            Cadastrar
+          </SubmenuItem>
+          <SubmenuItem to="/produtos" icon="fas fa-list" collapsed={collapsed}>
+            Listar
+          </SubmenuItem>
+          <SubmenuItem to="/produtos/editar" icon="fas fa-edit" collapsed={collapsed}>
+            Editar
+          </SubmenuItem>
+        </Submenu>
+
+        {/* Competências */}
+        <Submenu
+          label="Competência"
+          icon="fas fa-wallet"
+          open={!!openMenus.competencias}
+          onToggle={() => toggleSubmenu("competencias")}
+          collapsed={collapsed}
+        >
+          <SubmenuItem to="/competencias" icon="fas fa-eye" collapsed={collapsed}>
+            Ver Competências
+          </SubmenuItem>
+        </Submenu>
+
+        {/* Despesas */}
+        <Submenu
+          label="Despesas"
+          icon="fas fa-wallet"
+          open={!!openMenus.despesas}
+          onToggle={() => toggleSubmenu("despesas")}
+          collapsed={collapsed}
+        >
+          <SubmenuItem to="/despesas" icon="fas fa-eye" collapsed={collapsed}>
+            Ver Despesas
+          </SubmenuItem>
+        </Submenu>
+
+        {/* Grupos */}
+        <Submenu
+          label="Grupos"
+          icon="fas fa-layer-group"
+          open={!!openMenus.grupos}
+          onToggle={() => toggleSubmenu("grupos")}
+          collapsed={collapsed}
+        >
+          <SubmenuItem to="/grupos/novo" icon="fas fa-plus" collapsed={collapsed}>
+            Cadastrar
+          </SubmenuItem>
+          <SubmenuItem to="/grupos" icon="fas fa-list" collapsed={collapsed}>
+            Listar
+          </SubmenuItem>
+          {/* Ex.: rota de edição genérica */}
+          <SubmenuItem to="/grupos/editar" icon="fas fa-edit" collapsed={collapsed}>
+            Editar
+          </SubmenuItem>
         </Submenu>
 
         {/* Configurações */}
         <Submenu
           label="Configurações"
           icon="fas fa-cog"
-          open={openMenus.config}
+          open={!!openMenus.config}
           onToggle={() => toggleSubmenu("config")}
           collapsed={collapsed}
         >
-          <div className="px-12 py-2 hover:bg-gray-700 transition-colors flex items-center gap-2">
-            <i className="fas fa-user text-sm w-4" />
-            <span className="text-sm">Perfil</span>
-          </div>
-          <div className="px-12 py-2 hover:bg-gray-700 transition-colors flex items-center gap-2">
-            <i className="fas fa-shield-alt text-sm w-4" />
-            <span className="text-sm">Segurança</span>
-          </div>
-          <div className="px-12 py-2 hover:bg-gray-700 transition-colors flex items-center gap-2">
-            <i className="fas fa-palette text-sm w-4" />
-            <span className="text-sm">Aparência</span>
-          </div>
+          <SubmenuItem to="/perfil" icon="fas fa-user" collapsed={collapsed}>
+            Perfil
+          </SubmenuItem>
+          <SubmenuItem to="/seguranca" icon="fas fa-shield-alt" collapsed={collapsed}>
+            Segurança
+          </SubmenuItem>
+          <SubmenuItem to="/aparencia" icon="fas fa-palette" collapsed={collapsed}>
+            Aparência
+          </SubmenuItem>
         </Submenu>
 
         {/* Sair */}
