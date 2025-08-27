@@ -1,4 +1,3 @@
-// === File: src/components/Sidebar.jsx ===
 import { Link, useLocation } from "react-router-dom";
 
 function Submenu({ label, icon, open, onToggle, collapsed, children }) {
@@ -99,6 +98,19 @@ export default function Sidebar({ collapsed, openMenus, toggleSubmenu, sidebarPx
           </SubmenuItem>
           <SubmenuItem to="/produtos/editar" icon="fas fa-edit" collapsed={collapsed}>
             Editar
+          </SubmenuItem>
+        </Submenu>
+
+        {/* DashBoard */}
+        <Submenu
+          label="Dashboard"
+          icon="fas fa-bar-chart"
+          open={!!openMenus.dashboard}
+          onToggle={() => toggleSubmenu("dashboard")}
+          collapsed={collapsed}
+        >
+          <SubmenuItem to="/dashboard" icon="fas fa-eye" collapsed={collapsed}>
+            Ver Dashboard
           </SubmenuItem>
         </Submenu>
 
