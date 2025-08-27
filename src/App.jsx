@@ -9,6 +9,7 @@ import ConfirmModal from "./components/ConfirmModal";
 import Grupos from "./Pages/Grupos/grupos";
 import Despesas from "./Pages/Despesas/despesas";
 import Competencias from "./Pages/Competências/competências";
+import DashboardDespesas from "./Pages/Dashboard/dashBoard";
 
 
 const GrupoNovo = () => <div>Novo Grupo</div>;
@@ -67,6 +68,9 @@ export default function AppRoutes() {
         <div className="max-w-7xl mx-auto">
           <Routes>
             <Route path="/" element={<Home />} />
+
+            {/* Dashboard */}
+            <Route path="/dashboard" element={<DashboardDespesas />} />
 
             {/* Competências */}
             <Route path="/competencias" element={<Competencias />} />
