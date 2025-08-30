@@ -96,7 +96,7 @@ export default function Despesas() {
 
       <form
         onSubmit={handleSubmit}
-        className="grid grid-cols-1 md:grid-cols-5 gap-3 bg-slate-100 border border-gray-200 rounded-sm p-4"
+        className="grid grid-cols-1 md:grid-cols-5 gap-3 bg-transparent border border-gray-200 rounded-sm p-4"
       >
         <div className="flex flex-col">
           <label className="text-sm mb-1">Tipo</label>
@@ -104,7 +104,7 @@ export default function Despesas() {
             name="tipo"
             value={form.tipo}
             onChange={handleChange}
-            className="px-3 py-2 rounded-sm bg-gray-100 border border-gray-200 outline-none"
+            className="px-3 py-2 rounded-sm bg-slate-100 border border-gray-200 outline-none"
             placeholder="Ex.: Alimentação"
           />
         </div>
@@ -115,7 +115,7 @@ export default function Despesas() {
             name="descricao"
             value={form.descricao}
             onChange={handleChange}
-            className="px-3 py-2 rounded-sm bg-gray-100 border border-gray-200 outline-none"
+            className="px-3 py-2 rounded-sm bg-slate-100 border border-gray-200 outline-none"
             placeholder="Ex.: Almoço com cliente"
           />
         </div>
@@ -126,7 +126,7 @@ export default function Despesas() {
             name="valor"
             value={form.valor}
             onChange={handleChange}
-            className="px-3 py-2 rounded-sm bg-gray-100 border border-gray-200 outline-none"
+            className="px-3 py-2 rounded-sm bg-slate-100 border border-gray-200 outline-none"
             placeholder="0,00"
             inputMode="decimal"
           />
@@ -138,7 +138,7 @@ export default function Despesas() {
             name="data"
             value={form.data}
             onChange={handleChange}
-            className="px-3 py-2 rounded-sm bg-gray-100 border border-gray-200 outline-none"
+            className="px-3 py-2 rounded-sm bg-slate-100 border border-gray-200 outline-none"
             placeholder="2025-08-30"
             type="date"
           />
