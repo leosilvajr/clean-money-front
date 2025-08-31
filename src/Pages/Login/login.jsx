@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useLogin from "./useLogin";
+import imgbg from "../../assets/images/FinancialControlImg.png";
 
 export default function Login({ onLoginSuccess }) {
 
@@ -15,8 +16,15 @@ export default function Login({ onLoginSuccess }) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-10">
+    <div className="min-h-screen flex h-screen w-screen bg-gradient-to-br from-gray-800 via-gray-600 to-gray-500">
+      <div className="flex items-center justify-center h-full basis-[70%]">
+        <img
+          src={imgbg}
+          alt="Financial Control"
+          className="rounded-l-2xl"
+        />
+      </div>
+      <div className="bg-white flex flex-col items-center justify-center p-6 h-full basis-[30%]">
         <div className="flex flex-col items-center mb-6">
           <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
             <i className="fas fa-user-shield" />
@@ -24,7 +32,7 @@ export default function Login({ onLoginSuccess }) {
           <h2 className="mt-4 text-2xl font-bold text-gray-800">Bem-vindo</h2>
           <p className="text-gray-500">Acesse sua conta</p>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 w-full">
           <div>
             <label className="block text-sm font-medium text-gray-700">Usuário</label>
             <input
@@ -35,7 +43,7 @@ export default function Login({ onLoginSuccess }) {
               placeholder="Digite seu usuário"
             />
           </div>
-          <div>
+          <div className="relative">
             <label className="block text-sm font-medium text-gray-700">Senha</label>
             <input
               type={showPass ? "text" : "password"}
@@ -44,8 +52,12 @@ export default function Login({ onLoginSuccess }) {
               className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="Digite sua senha"
             />
-            <button type="button" onClick={() => setShowPass(s => !s)}>
-              {showPass ? "Ocultar" : "Mostrar"}
+            <button
+              type="button"
+              onClick={() => setShowPass((s) => !s)}
+              className="absolute inset-y-0 top-6 right-3 flex items-center text-gray-500"
+            >
+              {showPass ? <i className="fas fa-eye-slash" /> : <i className="fas fa-eye" />}
             </button>
           </div>
           {error && <p className="text-red-600 text-sm">{error}</p>}
