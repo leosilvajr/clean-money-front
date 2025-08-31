@@ -4,12 +4,12 @@ import "./index.css";
 import Home from "./Pages/home";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
-import Login from "./Pages/login";
 import ConfirmModal from "./components/ConfirmModal";
 import Grupos from "./Pages/Grupos/grupos";
 import Despesas from "./Pages/Despesas/despesas";
 import Competencias from "./Pages/Competências/competências";
 import DashboardDespesas from "./Pages/Dashboard/dashBoard";
+import Login from "./Pages/Login/login";
 
 
 const GrupoNovo = () => <div>Novo Grupo</div>;
