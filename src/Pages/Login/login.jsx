@@ -21,13 +21,13 @@ export default function Login({ onLoginSuccess }) {
         <img
           src={imgbg}
           alt="Financial Control"
-          className="rounded-l-2xl"
+          className=""
         />
       </div>
       <div className="bg-white flex flex-col items-center justify-center p-6 h-full basis-[30%]">
         <div className="flex flex-col items-center mb-6">
-          <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-            <i className="fas fa-user-shield" />
+          <div className="w-16 h-16 bg-[#041c3c] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+            <i className="fas fa-line-chart" />
           </div>
           <h2 className="mt-4 text-2xl font-bold text-gray-800">Bem-vindo</h2>
           <p className="text-gray-500">Acesse sua conta</p>
@@ -39,7 +39,7 @@ export default function Login({ onLoginSuccess }) {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="mt-1 w-full px-4 py-2 border border-[#041c3c] rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="Digite seu usuário"
             />
           </div>
@@ -49,7 +49,7 @@ export default function Login({ onLoginSuccess }) {
               type={showPass ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="mt-1 w-full px-4 py-2 border border-[#041c3c] rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="Digite sua senha"
             />
             <button
@@ -64,7 +64,7 @@ export default function Login({ onLoginSuccess }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
+            className="w-full py-3 bg-[#041c3c] text-white font-bold rounded-lg hover:bg-[#044c84] transition-colors cursor-pointer"
           >
             {loading ? "Entrando..." : "Entrar"}
           </button>
