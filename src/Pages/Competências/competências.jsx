@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import EnhancedTable from "../../components/enhancedTable";
+import { api } from "../../services/api";
 
 // Gera N competências (mês/ano) retroativas a partir do mês atual
 function gerarCompetencias(n = 12) {
@@ -124,7 +125,7 @@ export default function Competencias() {
         onPageChange={setPage}
         onRowsPerPageChange={setRowsPerPage}
         onFilterChange={setFilter}
-        onApply={() => {}}
+        onApply={() => { }}
         linhasClicaveis={false}
         showActions={true}
         idField="id"
