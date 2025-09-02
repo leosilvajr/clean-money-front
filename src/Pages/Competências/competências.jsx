@@ -31,8 +31,8 @@ function toMonthStartISO(yyyymm) {
 export default function Competencias() {
   // colunas da tabela
   const tableColumns = [
-    { key: "id", label: "ID" },
-    { key: "userId", label: "Usuário" },
+    // { key: "id", label: "ID" },
+    // { key: "userId", label: "Usuário" },
     {
       key: "dataCompetencia",
       label: "Competência",
@@ -101,7 +101,6 @@ export default function Competencias() {
         allowCreate={true}
         allowEdit={true}
         allowDelete={true}
-        // filtros extras padrão (remova se não usar soft delete)
         extraParams={{ isDeleted: false }}
         defaultFormData={{}}
         linhasClicaveis={false}
