@@ -21,22 +21,40 @@ export function useCrud(endpoint, initialParams = {}) {
 
   const firstRun = useRef(true);
 
+  const toPascalPath = (s) =>
+    (s || "")
+      .split(".")
+      .map(seg => seg ? seg.charAt(0).toUpperCase() + seg.slice(1) : seg)
+      .join(".");
+
   const buildQuery = useCallback(() => {
     const { search, page, limit, orderOptions, filters, extraParams } = params;
 
     const primaryOrder = Array.isArray(orderOptions) && orderOptions.length > 0
       ? orderOptions[0]
-      : { Field: "Codigo", OrderDirection: "asc" };
+      : { Field: "Id", OrderDirection: "asc" };
+    const fieldApi = toPascalPath(primaryOrder.Field);
+    const directionApi = /^desc$/i.test(primaryOrder.OrderDirection) ? "Desc" : "Asc";
 
     // Monte um objeto "rico". Se sua API só entende alguns campos,
     // ajuste aqui (ou no backend) sem tocar o DataPage.
     const query = {
+      // novo formato
       search,
       page,
       limit,
-      orderOptions, // mantém o array
       orderField: primaryOrder.Field,
       orderDirection: primaryOrder.OrderDirection,
+
+      "ordering.items[0].field": fieldApi,
+      "ordering.items[0].direction": directionApi,
+
+      // legado (o seu back atual usa estes)
+      "pagination.pageNumber": page,
+      "pagination.pageSize": limit,
+      "ordering.field": primaryOrder.Field,
+      "ordering.direction": primaryOrder.OrderDirection,
+
       ...filters,
       ...(extraParams || {}),
     };
