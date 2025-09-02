@@ -1,97 +1,88 @@
-import { useCallback, useMemo, useState } from "react";
-import { api } from "../services/api"; // ⚠️ se seu service exporta default, use: import api from "../services/api";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useCrudCore } from "./useCrudCore";
 
-export function useCrud(endpoint) {
-  const [items, setItems] = useState([]);
-  const [total, setTotal] = useState(undefined);
-  const [pagination, setPagination] = useState(undefined); // <- novo (opcional)
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(undefined);
+/**
+ * Adapter para o DataPage (JS puro)
+ * - Sincroniza params locais e chama core.list(params) sempre que mudarem.
+ * - Expõe a interface esperada pelo DataPage.
+ */
+export function useCrud(endpoint, initialParams = {}) {
+  const core = useCrudCore(endpoint);
 
-  const url = useMemo(() => endpoint.replace(/\/+$/, ""), [endpoint]);
+  const [params, setParams] = useState({
+    search: "",
+    page: 1,            // 1-based
+    limit: 10,
+    orderOptions: [{ Field: "Codigo", OrderDirection: "asc" }],
+    filters: {},
+    extraParams: {},
+    ...initialParams,
+  });
 
-  const list = useCallback(async (params) => {
-    setLoading(true);
-    setError(undefined);
-    try {
-      const res = await api.get(url, { params });
-      const payload = res.data;
+  const firstRun = useRef(true);
 
-      if (Array.isArray(payload)) {
-        // Resposta é um array simples
-        setItems(payload);
-        setTotal(payload.length);
-        setPagination(undefined);
-      } else if (payload && typeof payload === "object") {
-        // Formatos suportados:
-        // 1) { items: [...], pagination: { totalItems, ... } }
-        // 2) { data:  [...], total: 123 }
-        // 3) fallback para não quebrar
-        const fromItems = Array.isArray(payload.items) ? payload.items : undefined;
-        const fromData = Array.isArray(payload.data) ? payload.data : undefined;
+  const buildQuery = useCallback(() => {
+    const { search, page, limit, orderOptions, filters, extraParams } = params;
 
-        const listArr = fromItems ?? fromData ?? [];
-        const totalNum =
-          payload?.pagination?.totalItems ??
-          payload?.total ??
-          listArr.length;
+    const primaryOrder = Array.isArray(orderOptions) && orderOptions.length > 0
+      ? orderOptions[0]
+      : { Field: "Codigo", OrderDirection: "asc" };
 
-        setItems(listArr);
-        setTotal(totalNum);
-        setPagination(payload?.pagination); // mantém info da API
-      } else {
-        setItems([]);
-        setTotal(0);
-        setPagination(undefined);
-      }
-    } catch (e) {
-      const msg =
-        e?.response?.data?.message ||
-        e?.message ||
-        "Erro ao carregar dados";
-      setError(msg);
-      setItems([]);
-      setTotal(0);
-      setPagination(undefined);
-    } finally {
-      setLoading(false);
+    // Monte um objeto "rico". Se sua API só entende alguns campos,
+    // ajuste aqui (ou no backend) sem tocar o DataPage.
+    const query = {
+      search,
+      page,
+      limit,
+      orderOptions, // mantém o array
+      orderField: primaryOrder.Field,
+      orderDirection: primaryOrder.OrderDirection,
+      ...filters,
+      ...(extraParams || {}),
+    };
+
+    return query;
+  }, [params]);
+
+  // Carrega ao iniciar e a cada mudança de params
+  useEffect(() => {
+    // evita duplo disparo em StrictMode
+    if (firstRun.current) {
+      firstRun.current = false;
+      core.list(buildQuery());
+      return;
     }
-  }, [url]);
+    core.list(buildQuery());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buildQuery, endpoint]);
 
-  const getById = useCallback(async (id) => {
-    const res = await api.get(`${url}/${id}`);
-    return res.data;
-  }, [url]);
+  const updateParams = useCallback((patch) => {
+    setParams((prev) => ({ ...prev, ...(patch || {}) }));
+  }, []);
 
-  const createItem = useCallback(async (payload) => {
-    const res = await api.post(url, payload);
-    setItems((prev) => [res.data, ...prev]);
-    return res.data;
-  }, [url]);
+  const create = useCallback(async (payload) => {
+    await core.createItem(payload);
+    await core.list(buildQuery());
+  }, [core, buildQuery]);
 
-  const updateItem = useCallback(async (id, payload) => {
-    const res = await api.put(`${url}/${id}`, payload);
-    const updated = res.data;
-    setItems((prev) => prev.map((it) => (String(it.id) === String(id) ? updated : it)));
-    return updated;
-  }, [url]);
+  const update = useCallback(async (id, payload) => {
+    await core.updateItem(id, payload);
+    await core.list(buildQuery());
+  }, [core, buildQuery]);
 
-  const deleteItem = useCallback(async (id) => {
-    await api.delete(`${url}/${id}`);
-    setItems((prev) => prev.filter((it) => String(it.id) !== String(id)));
-  }, [url]);
+  const remove = useCallback(async (id) => {
+    await core.deleteItem(id);
+    await core.list(buildQuery());
+  }, [core, buildQuery]);
 
   return {
-    items,
-    total,          // agora traz pagination.totalItems quando houver
-    pagination,     // opcional: traz { pageNumber, pageSize, ... }
-    loading,
-    error,
-    list,
-    getById,
-    createItem,
-    updateItem,
-    deleteItem,
-    setItems,
+    data: core.items,
+    totalCount: core.total ?? (Array.isArray(core.items) ? core.items.length : 0),
+    loading: core.loading,
+    error: core.error,
+    create,
+    update,
+    remove,
+    updateParams,
   };
 }
