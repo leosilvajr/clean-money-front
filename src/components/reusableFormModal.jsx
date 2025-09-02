@@ -58,9 +58,9 @@ const ReusableFormModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{title}</h2>
+    <div className="fixed inset-0 z-50 bg-white/30 backdrop-blur-sm flex items-center justify-center">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">{title}</h2>
 
         {tabs && (
           <div className="flex space-x-4 border-b mb-4 overflow-scroll">
@@ -95,7 +95,7 @@ const ReusableFormModal = ({
                   <div key={field.name} className="md:grid md:grid-cols-5 items-center mb-2">
                     <label
                       htmlFor={field.name}
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 col-span-2"
+                      className="block text-sm font-medium text-gray-700 col-span-2"
                     >
                       {field.label}
                     </label>
@@ -108,7 +108,7 @@ const ReusableFormModal = ({
                         checked={getNestedValue(formData, field.name) || false}
                         disabled={field.disabled}
                         onChange={(e) => handleChange(e, field)}
-                        className="h-5 w-5 text-blue-600 border-gray-300 rounded dark:bg-slate-900 dark:border-slate-600 col-span-3"
+                        className="h-5 w-5 text-blue-600 border-gray-300 rounded col-span-3"
                       />
                     ) : field.type === "list" ? (
                       <select
@@ -121,7 +121,6 @@ const ReusableFormModal = ({
                           ${hasError
                             ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                             : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"}
-                          dark:bg-slate-900 dark:text-gray-100 dark:border-slate-600
                           ${field.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
                       >
                         {field.options?.map((opt) => (
@@ -143,7 +142,6 @@ const ReusableFormModal = ({
                           ${hasError
                             ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                             : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"}
-                          dark:bg-slate-900 dark:text-gray-100 dark:border-slate-600
                           ${field.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
                       />
                     )}
@@ -156,17 +154,17 @@ const ReusableFormModal = ({
               })}
           </div>
 
-          <div className="sticky bottom-[-25px] flex justify-end space-x-2 mt-6 bg-white dark:bg-slate-800 p-4">
+          <div className="sticky bottom-[-25px] flex justify-end space-x-2 mt-6 bg-white p-4">
             <button
               type="button"
               onClick={handleClose}
-              className="px-4 py-2 border border-gray-300 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-slate-700"
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-100"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
               Salvar
             </button>
