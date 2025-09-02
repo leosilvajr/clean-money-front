@@ -21,7 +21,7 @@ export default function Login({ onLoginSuccess }) {
         <img
           src={imgbg}
           alt="Financial Control"
-          className=""
+          className="object-cover w-full h-full"
         />
       </div>
       <div className="bg-white flex flex-col items-center justify-center p-6 h-full basis-[30%]">
