@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
-import EnhancedTable from "../../components/enhancedTable";
-import { useCrud } from "../../hooks/useCrud";
+import DataPage from "../../components/dataPage";
 
+// helper para exibir MM/AAAA
 function formatCompetencia(iso) {
   const d = new Date(iso);
   if (isNaN(d)) return "-";
@@ -10,70 +9,105 @@ function formatCompetencia(iso) {
   return `${mes}/${ano}`;
 }
 
+// normaliza para o 1º dia do mês às 00:00:00Z
+function toMonthStartISO(yyyymm) {
+  // yyyymm pode vir como "2025-09" (input type="month") ou "2025-09-01"
+  const m = String(yyyymm || "").trim();
+  if (!m) return null;
+
+  const [yearStr, monthStrRaw] = m.split("-");
+  if (!yearStr || !monthStrRaw) return null;
+
+  const monthStr = monthStrRaw.padStart(2, "0");
+  const year = Number(yearStr);
+  const month = Number(monthStr);
+
+  if (!year || !month || month < 1 || month > 12) return null;
+
+  const iso = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0)).toISOString();
+  return iso;
+}
+
 export default function Competencias() {
-  const { items, total, loading, error, list, deleteItem } =
-    useCrud("/api/competencias");
-
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [orderField, setOrderField] = useState("dataCompetencia");
-  const [orderDirection, setOrderDirection] = useState("desc");
-  const [filter, setFilter] = useState("");
-
-
-  const fetchPage = () =>
-    list({
-      "pagination.pageNumber": page + 1,
-      "pagination.pageSize": rowsPerPage,
-      "ordering.field": orderField,
-      "ordering.direction": orderDirection,
-      search: filter || undefined,
-      // "showDeleted": false, //
-    });
-
-  useEffect(() => {
-    fetchPage();
-  }, [page, rowsPerPage, orderField, orderDirection, filter]);
-
-  const columns = [
+  // colunas da tabela
+  const tableColumns = [
     { key: "id", label: "ID" },
     { key: "userId", label: "Usuário" },
-    { key: "dataCompetencia", label: "Competência", render: (v) => formatCompetencia(v) },
+    {
+      key: "dataCompetencia",
+      label: "Competência",
+      render: (v) => formatCompetencia(v),
+    },
   ];
 
-  const handleDelete = async (id) => {
-    await deleteItem(id);
-    fetchPage();
+  // campos do formulário do modal
+  const formFields = [
+    {
+      name: "userId",
+      label: "Usuário (ID)",
+      type: "number",
+      placeholder: "ex.: 123",
+      colSpan: 1,
+    },
+    {
+      name: "dataCompetencia",
+      label: "Competência (mês/ano)",
+      // usar type="month" facilita a entrada (gera "YYYY-MM")
+      type: "month",
+      placeholder: "YYYY-MM",
+      colSpan: 1,
+    },
+  ];
+
+  // validações (DataPage espera array de mensagens)
+  const validateForm = (formData) => {
+    const errs = [];
+    const userIdNum = Number(formData?.userId);
+
+    if (!formData?.userId || Number.isNaN(userIdNum) || userIdNum <= 0) {
+      errs.push("Informe um usuário válido.");
+    }
+
+    if (!formData?.dataCompetencia) {
+      errs.push("Informe a competência (mês/ano).");
+    } else {
+      const iso = toMonthStartISO(formData.dataCompetencia);
+      if (!iso) errs.push("Competência inválida. Use o formato YYYY-MM.");
+    }
+
+    return errs;
+  };
+
+  const transformBeforeSave = (formData) => {
+    const iso = toMonthStartISO(formData.dataCompetencia);
+    return {
+      ...formData,
+      userId: Number(formData.userId),
+      dataCompetencia: iso,
+    };
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Competências</h1>
-
-      <EnhancedTable
-        data={items ?? []}
-        columns={columns}
+    <div className="p-4 space-y-6">
+      <DataPage
+        endpoint={"/api/competencias"}
+        tableColumns={tableColumns}
+        formFields={formFields}
+        modalTitle="Competências"
+        createTitle="Criar competência"
+        editTitle="Salvar alterações"
+        validateForm={validateForm}
+        transformBeforeSave={transformBeforeSave}
+        allowCreate={true}
+        allowEdit={true}
+        allowDelete={true}
+        // filtros extras padrão (remova se não usar soft delete)
+        extraParams={{ isDeleted: false }}
+        defaultFormData={{}}
+        linhasClicaveis={false}
+        showActions={true}
         idField="id"
-        value={filter}
-        onFilterChange={setFilter}
-        onApply={fetchPage}
-        orderField={orderField}
-        orderDirection={orderDirection}
-        onOrderChange={(f, d) => {
-          setOrderField(f);
-          setOrderDirection(d);
-          setPage(0);
-        }}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        totalCount={total ?? 0}                     
-        onPageChange={(p) => p >= 0 && setPage(p)}
-        onRowsPerPageChange={(n) => { setRowsPerPage(n); setPage(0); }}
-        showActions
-        onEdit={(row) => alert(`Editar ${row.id}`)}
-        onDelete={handleDelete}
-        loading={loading}
-        error={typeof error === "string" ? error : undefined}
+        nomePagina="Competências"
       />
     </div>
   );

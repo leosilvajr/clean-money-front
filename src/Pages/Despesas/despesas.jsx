@@ -1,186 +1,94 @@
-import { useMemo, useState } from "react";
-import { despesasMock } from "./despesasMock";
-import EnhancedTable from "../../components/enhancedTable";
+import DataPage from "../../components/dataPage";
 
 export default function Despesas() {
-  const [data, setData] = useState(despesasMock);
-  const [form, setForm] = useState({
-    tipo: "",
-    descricao: "",
-    valor: "",
-    data: "",
-  });
-  const [editingId, setEditingId] = useState(null);
-
-  const nextId = useMemo(() => {
-    return data.length ? Math.max(...data.map(d => d.id)) + 1 : 1;
-  }, [data]);
-
-  const columns = [
+  // Colunas da tabela
+  const tableColumns = [
     { key: "tipo", label: "Tipo" },
     { key: "descricao", label: "Descrição" },
     {
       key: "valor",
       label: "Valor (R$)",
-      render: (v) => Number(v ?? 0).toFixed(2)
+      render: (v) => Number(v ?? 0).toFixed(2),
     },
     { key: "data", label: "Data" },
   ];
 
-  function resetForm() {
-    setForm({ tipo: "", descricao: "", valor: "", data: "" });
-    setEditingId(null);
-  }
+  // Campos do modal de formulário reutilizável
+  const formFields = [
+    {
+      name: "tipo",
+      label: "Tipo",
+      placeholder: "Ex.: Alimentação",
+      type: "text",
+      colSpan: 1,
+    },
+    {
+      name: "descricao",
+      label: "Descrição",
+      placeholder: "Ex.: Almoço com cliente",
+      type: "text",
+      colSpan: 2,
+    },
+    {
+      name: "valor",
+      label: "Valor (R$)",
+      placeholder: "0,00",
+      type: "text", // deixe text para aceitar vírgula, converteremos antes de salvar
+      colSpan: 1,
+    },
+    {
+      name: "data",
+      label: "Data",
+      type: "date",
+      placeholder: "2025-08-30",
+      colSpan: 1,
+    },
+  ];
 
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-  }
+  // Validação mínima (DataPage espera um array de mensagens de erro)
+  const validateForm = (formData) => {
+    const errs = [];
+    if (!formData?.tipo || !String(formData.tipo).trim()) errs.push("Informe o tipo.");
+    if (!formData?.descricao || !String(formData.descricao).trim()) errs.push("Informe a descrição.");
 
-  function handleSubmit(e) {
-    e.preventDefault();
+    const rawValor = String(formData?.valor ?? "").replace(",", ".");
+    if (!rawValor || isNaN(parseFloat(rawValor))) errs.push("Informe um valor numérico válido.");
 
-    if (!form.tipo.trim() || !form.descricao.trim() || !form.valor.trim() || !form.data.trim()) {
-      alert("Preencha todos os campos.");
-      return;
-    }
+    if (!formData?.data) errs.push("Informe a data.");
 
-    const valorNumber = parseFloat(String(form.valor).replace(",", "."));
-    if (isNaN(valorNumber)) {
-      alert("Informe um valor numérico válido.");
-      return;
-    }
+    return errs;
+  };
 
-    if (editingId == null) {
-      const nova = {
-        id: nextId,
-        tipo: form.tipo.trim(),
-        descricao: form.descricao.trim(),
-        valor: valorNumber,
-        data: form.data.trim(),
-      };
-      setData(prev => [nova, ...prev]);
-    } else {
-      setData(prev =>
-        prev.map(d =>
-          d.id === editingId
-            ? { ...d, tipo: form.tipo.trim(), descricao: form.descricao.trim(), valor: valorNumber, data: form.data.trim() }
-            : d
-        )
-      );
-    }
-
-    resetForm();
-  }
-
-  function handleEdit(row) {
-    setEditingId(row.id);
-    setForm({
-      tipo: row.tipo || "",
-      descricao: row.descricao || "",
-      valor: String(row.valor ?? ""),
-      data: row.data || "",
-    });
-  }
-
-  function handleDelete(row) {
-    if (confirm(`Deseja remover a despesa "${row.descricao}"?`)) {
-      setData(prev => prev.filter(d => d.id !== row.id));
-      if (editingId === row.id) resetForm();
-    }
-  }
+  // Transformações antes de salvar (ex.: converter valor para número, normalizar data)
+  const transformBeforeSave = (formData) => {
+    const valorNumber = parseFloat(String(formData.valor ?? "").replace(",", "."));
+    return {
+      ...formData,
+      valor: isNaN(valorNumber) ? 0 : valorNumber,
+      // se precisar ajustar a data para ISO/local, faça aqui
+    };
+  };
 
   return (
     <div className="p-4 space-y-6">
-      <h1 className="text-2xl font-bold">Despesas</h1>
-
-      <form
-        onSubmit={handleSubmit}
-        className="grid grid-cols-1 md:grid-cols-5 gap-3 bg-transparent border border-gray-200 rounded-sm p-4"
-      >
-        <div className="flex flex-col">
-          <label className="text-sm mb-1">Tipo</label>
-          <input
-            name="tipo"
-            value={form.tipo}
-            onChange={handleChange}
-            className="px-3 py-2 rounded-sm bg-slate-100 border border-gray-200 outline-none"
-            placeholder="Ex.: Alimentação"
-          />
-        </div>
-
-        <div className="md:col-span-2 flex flex-col">
-          <label className="text-sm mb-1">Descrição</label>
-          <input
-            name="descricao"
-            value={form.descricao}
-            onChange={handleChange}
-            className="px-3 py-2 rounded-sm bg-slate-100 border border-gray-200 outline-none"
-            placeholder="Ex.: Almoço com cliente"
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <label className="text-sm mb-1">Valor (R$)</label>
-          <input
-            name="valor"
-            value={form.valor}
-            onChange={handleChange}
-            className="px-3 py-2 rounded-sm bg-slate-100 border border-gray-200 outline-none"
-            placeholder="0,00"
-            inputMode="decimal"
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <label className="text-sm mb-1">Data</label>
-          <input
-            name="data"
-            value={form.data}
-            onChange={handleChange}
-            className="px-3 py-2 rounded-sm bg-slate-100 border border-gray-200 outline-none"
-            placeholder="2025-08-30"
-            type="date"
-          />
-        </div>
-
-        <div className="md:col-span-5 flex items-center gap-3">
-          <button
-            type="submit"
-            className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 cursor-pointer transition font-medium"
-          >
-            {editingId == null ? "Adicionar despesa" : "Salvar alterações"}
-          </button>
-          {editingId != null && (
-            <button
-              type="button"
-              onClick={resetForm}
-              className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white transition cursor-pointer"
-            >
-              Cancelar edição
-            </button>
-          )}
-        </div>
-      </form>
-
-      <EnhancedTable
-        data={data}
-        columns={columns}
-        page={0}
-        rowsPerPage={5}
-        totalCount={data.length}
-        orderField="tipo"
-        orderDirection="asc"
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onOrderChange={() => {}}
-        onPageChange={() => {}}
-        onRowsPerPageChange={() => {}}
-        onFilterChange={() => {}}
-        onApply={() => {}}
+      <DataPage
+        endpoint={"/api/despesas"}            // ajuste para o seu endpoint real
+        tableColumns={tableColumns}
+        formFields={formFields}
+        modalTitle="Despesas"
+        createTitle="Adicionar despesa"
+        editTitle="Salvar alterações"
+        validateForm={validateForm}
+        allowCreate={true}
+        allowEdit={true}
+        allowDelete={true}
+        extraParams={{ isDeleted: false }}     // se não usar, pode remover
+        defaultFormData={{}}                   // valores iniciais do formulário
         linhasClicaveis={false}
         showActions={true}
         idField="id"
+        nomePagina="Despesas"
+        transformBeforeSave={transformBeforeSave}
       />
     </div>
   );
