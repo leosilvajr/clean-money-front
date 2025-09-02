@@ -48,9 +48,9 @@ export default function EnhancedTable({
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-300 text-sm">
-          <thead className="bg-gray-100 text-gray-700">
-            <tr>
-              {showActions && <th className="px-4 py-2 min-w-[100px] max-w-[150px]">Ações</th>}
+          <thead className="bg-gray-100 text-gray-700 w-fit">
+            <tr className="w-fit">
+              {showActions && <th className="px-4 py-2">Ações</th>}
               {columns.map((col) => (
                 <th
                   key={col.key}
@@ -79,7 +79,7 @@ export default function EnhancedTable({
                 className="border-t border-none border-gray-300 even:bg-gray-50 hover:bg-gray-100"
               >
                 {showActions && (
-                  <td className="px-4 py-2 space-x-2">
+                  <td className="px-4 py-2 space-x-2 text-center">
                     <button onClick={(e) => { e.stopPropagation(); onEdit(item); }} className="text-blue-600 hover:underline">
                       <Pencil size={16} />
                     </button>
@@ -127,7 +127,7 @@ export default function EnhancedTable({
           <button
             onClick={() => onPageChange(page - 1)}
             disabled={page === 0}
-            className="px-2 py-1 border border-gray-300 rounded disabled:opacity-50"
+          className={`px-2 py-1 border border-gray-300 rounded disabled:opacity-50 ${ page === 0 ? "" : "cursor-pointer"}`}
           >
             Anterior
           </button>
@@ -149,8 +149,8 @@ export default function EnhancedTable({
                 <button
                   onClick={() => onPageChange(i)}
                   className={`px-2 py-1 border rounded ${page === i
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "border-gray-300 text-gray-700"
+                    ? "bg-blue-600 text-white border-blue-600 cursor-pointer"
+                    : "border-gray-300 text-gray-700 cursor-pointer"
                     }`}
                 >
                   {i + 1}
@@ -161,7 +161,7 @@ export default function EnhancedTable({
           <button
             onClick={() => onPageChange(page + 1)}
             disabled={page + 1 >= Math.ceil(totalCount / rowsPerPage)}
-            className="px-2 py-1 border border-gray-300 rounded disabled:opacity-50"
+            className={`px-2 py-1 border border-gray-300 rounded disabled:opacity-50 ${ page + 1 >= Math.ceil(totalCount / rowsPerPage) ? "" : "cursor-pointer"}`}
           >
             Próxima
           </button>

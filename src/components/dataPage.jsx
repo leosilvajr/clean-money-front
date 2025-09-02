@@ -252,7 +252,7 @@ const DataPage = ({
 
   return (
     <div className="flex flex-col gap-4 py-2">
-      <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{nomePagina}</h1>
+      <h1 className="text-2xl font-bold text-gray-800">{nomePagina}</h1>
       <div className="flex justify-between items-center">
         {allowCreate && (
           <button
