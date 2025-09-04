@@ -1,28 +1,33 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useLogin from "./useLogin";
 import imgbg from "../../assets/images/FinancialControlImg.png";
 
 export default function Login({ onLoginSuccess }) {
+  const {
+    username, setUsername,
+    password, setPassword,
+    error, loading,
+    login, showPass, setShowPass
+  } = useLogin();
 
-  const { username, setUsername, password, setPassword, error, setError, loading, setLoading, login, showPass, setShowPass } = useLogin();
+  const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
     try {
       const { user } = await login();
       onLoginSuccess?.(user);
+      navigate("/", { replace: true });
     } catch {
+      
     }
   }
 
   return (
     <div className="min-h-screen flex h-screen w-screen bg-gradient-to-br from-gray-800 via-gray-600 to-gray-500">
       <div className="flex items-center justify-center h-full basis-[70%]">
-        <img
-          src={imgbg}
-          alt="Financial Control"
-          className="object-cover w-full h-full"
-        />
+        <img src={imgbg} alt="Financial Control" className="object-cover w-full h-full" />
       </div>
       <div className="bg-white flex flex-col items-center justify-center p-6 h-full basis-[30%]">
         <div className="flex flex-col items-center mb-6">
@@ -32,6 +37,7 @@ export default function Login({ onLoginSuccess }) {
           <h2 className="mt-4 text-2xl font-bold text-gray-800">Bem-vindo</h2>
           <p className="text-gray-500">Acesse sua conta</p>
         </div>
+
         <form onSubmit={handleSubmit} className="space-y-6 w-full">
           <div>
             <label className="block text-sm font-medium text-gray-700">Usuário</label>
@@ -43,6 +49,7 @@ export default function Login({ onLoginSuccess }) {
               placeholder="Digite seu usuário"
             />
           </div>
+
           <div className="relative">
             <label className="block text-sm font-medium text-gray-700">Senha</label>
             <input
@@ -60,7 +67,9 @@ export default function Login({ onLoginSuccess }) {
               {showPass ? <i className="fas fa-eye-slash" /> : <i className="fas fa-eye" />}
             </button>
           </div>
+
           {error && <p className="text-red-600 text-sm">{error}</p>}
+
           <button
             type="submit"
             disabled={loading}
